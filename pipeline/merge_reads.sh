@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check if the correct number of arguments is provided
-if [ "$#" -ne 15 ]; then
+if [ "$#" -ne 14 ]; then
   echo "Did not recieve expected number of arguments. Check process_ngs.sh, which creates the submit file."
   exit 1
 fi
@@ -19,12 +19,11 @@ merge=${6}
 singleend=${7}
 cpus=${8}
 memory=${9}
-instrument=${10}
-q_floor=${11}
-q_cutoff=${12}
-cutoff_pct=${13}
-sample_names_line=${14}
-reorg=${15}
+q_floor=${10}
+q_cutoff=${11}
+cutoff_pct=${12}
+sample_names_line=${13}
+reorg=${14}
 
 # Split sample_names_line into iterable
 IFS=',' read -r -a sample_names <<< "$(echo "$sample_names_line" | cut -d ',' -f 2-)"
@@ -73,40 +72,20 @@ for i in "${sample_names[@]}"; do
 		paste -d "" *_R1_001.fastq R2_rc.fastq > combined.assembled.fastq
 		echo -e "$(date '+%I:%M%p') -- READS MERGED"
 		echo -e "\n$(date '+%I:%M%p') -- FORMATTING MERGED READS"
-		if [ "$instrument" == "miseq" ]; then
-			sed '/@M07074/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		elif [ "$instrument" == "nextseq" ]; then
-			sed '/@VL00209/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		elif [ "$instrument" == "nextseq_fox" ]; then
-			sed '/@VL00232/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		elif [ "$instrument" == "novaseq" ]; then
-			sed '/@LH00283/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		else
-			echo -e "$(date '+%I:%M%p') -- INVALID INSTRUMENT ID. OUTPUT FILE COULD NOT BE FORMATTED."
-		fi
+	
+		# Detect and strip headers starting with @ followed by any non-space characters
+		sed -E '/^@[A-Z0-9-]+/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
+	
+		echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
 	fi
 	
 	if [[ "$merge" == "FALSE" && "$singleend" == "TRUE" ]]; then
-		echo -e "\n$(date '+%I:%M%p') -- FORMATTING SINGLE-END READS"
-		if [ "$instrument" == "miseq" ]; then
-			sed '/@M07074/d' ${i}_* | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		elif [ "$instrument" == "nextseq" ]; then
-			sed '/@VL00209/d' ${i}_* | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		elif [ "$instrument" == "nextseq_fox" ]; then
-			sed '/@VL00232/d' ${i}_* | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		elif [ "$instrument" == "novaseq" ]; then
-			sed '/@LH00283/d' ${i}_* | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		else
-			echo -e "$(date '+%I:%M%p') -- INVALID INSTRUMENT ID. OUTPUT FILE COULD NOT BE FORMATTED."
-		fi
+		echo -e "\n$(date '+%I:%M%p') -- FORMATTING MERGED READS"
+	
+		# Detect and strip headers starting with @ followed by any non-space characters
+		sed -E '/^@[A-Z0-9-]+/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
+	
+		echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
 	fi
 	
 	# Quality filtering
