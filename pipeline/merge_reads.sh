@@ -85,6 +85,7 @@ for i in "${sample_names_array[@]}"; do
 	# Calculate filtering statistics
 	cp ${data_filepath}/pipeline/get_stats.sh ${data_filepath}/Fastq/${i}
 	echo -e "\n$(date '+%I:%M%p') -- GETTING ASSEMBLY AND FILTERING STATISTICS"
+	chmod +x get_stats.sh
 	./get_stats.sh
 	echo -e "$(date '+%I:%M%p') -- READ FATES WRITTEN TO INFO.CSV"
 	rm get_stats.sh
