@@ -14,17 +14,17 @@ source "$params_file"
 start_time=$(date --utc +%s)
 
 # Set up file structure
-cd ${path}
+cd ${data_filepath}
 exec &> run_progress.log
-mkdir ${path}/csvs/
-rm ${path}/Fastq/paste_fastq_files_here
+mkdir ${data_filepath}/csvs/
+rm ${data_filepath}/Fastq/paste_fastq_files_here
 
 if [ "$reorg" == "TRUE" ]; then
-    mkdir ${path}/csvs/raw/
-    mkdir ${path}/csvs/raw/good_reads/
-    mkdir ${path}/csvs/raw/poor_reads/
-    mkdir ${path}/csvs/raw/info/
-    mkdir ${path}/csvs/raw/combined/
+    mkdir ${data_filepath}/csvs/raw/
+    mkdir ${data_filepath}/csvs/raw/good_reads/
+    mkdir ${data_filepath}/csvs/raw/poor_reads/
+    mkdir ${data_filepath}/csvs/raw/info/
+    mkdir ${data_filepath}/csvs/raw/combined/
 fi
 
 # Iterate through the sample names and merge reads
@@ -33,13 +33,13 @@ for i in "${sample_names[@]}"; do
 	echo -e "\033[1m$(printf %$(((80-(18+${#i}))/2))s |tr " " " ")PROCESSING SAMPLE $i\033[0m\n"
 	echo -e "\033[1m$(printf %80s |tr " " "=")\033[0m"
 
-	mkdir ${path}/Fastq/${i}/
-	cd ${path}/Fastq/${i}/
+	mkdir ${data_filepath}/Fastq/${i}/
+	cd ${data_filepath}/Fastq/${i}/
 	mv ../${i}_* . 
 	
 	if [ "$merge" == "TRUE" ]; then
 		echo -e "\n$(date '+%I:%M%p') -- MERGING PAIRED-END READS"
-		${pear} -f *_R1_001.fastq.gz -r *_R2_001.fastq.gz -o combined -y ${memory} -j ${cpus} -v ${pear_overlap} -g ${pear_stattest} -p ${pear_pvalue} \
+		${pear_filepath} -f *_R1_001.fastq.gz -r *_R2_001.fastq.gz -o combined -y ${memory} -j ${cpus} -v ${pear_overlap} -g ${pear_stattest} -p ${pear_pvalue} \
 		| grep -E -m 3 "Assembled reads|Discarded reads|Not assembled reads" | awk 'NF' | sed 's/^/           /'
 	
 		echo -e "$(date '+%I:%M%p') -- READS MERGED"
@@ -75,14 +75,14 @@ for i in "${sample_names[@]}"; do
 	fi
 	
 	# Quality filtering
-	cp ${path}/pipeline/QF3.out ${path}/Fastq/${i}
+	cp ${data_filepath}/pipeline/QF3.out ${data_filepath}/Fastq/${i}
 	echo -e "\n$(date '+%I:%M%p') -- FILTERING FOR HIGH QUALITY READS"
 	./QF3.out
 	echo -e "$(date '+%I:%M%p') -- QUALITY FILTERING COMPLETE"
 	rm QF3.out
 	
 	# Calculate filtering statistics
-	cp ${path}/pipeline/get_stats.sh ${path}/Fastq/${i}
+	cp ${data_filepath}/pipeline/get_stats.sh ${data_filepath}/Fastq/${i}
 	echo -e "\n$(date '+%I:%M%p') -- GETTING ASSEMBLY AND FILTERING STATISTICS"
 	./get_stats.sh
 	echo -e "$(date '+%I:%M%p') -- READ FATES WRITTEN TO INFO.CSV"
@@ -91,10 +91,10 @@ for i in "${sample_names[@]}"; do
 	# Reorganize files if requested
 	if [ "$reorg" == "TRUE" ]; then
 	    echo -e "\n$(date '+%I:%M%p') -- REORGANIZING FILES"
-    	mv good_reads.csv ${path}/csvs/raw/good_reads/good_reads_${i}.csv
-    	mv poor_reads.csv ${path}/csvs/raw/poor_reads/poor_reads_${i}.csv
-    	mv info.csv ${path}/csvs/raw/info/info_${i}.csv
-    	mv combined.fastq ${path}/csvs/raw/combined/combined_${i}.fastq
+    	mv good_reads.csv ${data_filepath}/csvs/raw/good_reads/good_reads_${i}.csv
+    	mv poor_reads.csv ${data_filepath}/csvs/raw/poor_reads/poor_reads_${i}.csv
+    	mv info.csv ${data_filepath}/csvs/raw/info/info_${i}.csv
+    	mv combined.fastq ${data_filepath}/csvs/raw/combined/combined_${i}.fastq
     	echo -e "$(date '+%I:%M%p') -- REORGANIZATION COMPLETE"
 	else
     	echo -e "\n$(date '+%I:%M%p') -- NO REORGANIZATION REQUESTED. FIND GOOD_READS WITHIN FASTQ SUBDIRECTORIES."
