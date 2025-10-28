@@ -28,7 +28,8 @@ if [ "$reorg" == "TRUE" ]; then
 fi
 
 # Iterate through the sample names and merge reads
-for i in "${sample_names[@]}"; do
+IFS=',' read -r -a sample_names_array <<< "$sample_names"
+for i in "${sample_names_array[@]}"; do
 	echo -e "\033[1m$(printf %80s |tr " " "=")\033[0m\n"
 	echo -e "\033[1m$(printf %$(((80-(18+${#i}))/2))s |tr " " " ")PROCESSING SAMPLE $i\033[0m\n"
 	echo -e "\033[1m$(printf %80s |tr " " "=")\033[0m"
