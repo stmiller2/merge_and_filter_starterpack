@@ -90,7 +90,7 @@ for i in "${sample_names_array[@]}"; do
 	rm get_stats.sh
 	
 	# Reorganize files if requested
-	if [ "$reorg" == "TRUE" ]; then
+	if [ "$reorganize" == "TRUE" ]; then
 	    echo -e "\n$(date '+%I:%M%p') -- REORGANIZING FILES"
     	mv good_reads.csv ${data_filepath}/csvs/raw/good_reads/good_reads_${i}.csv
     	mv poor_reads.csv ${data_filepath}/csvs/raw/poor_reads/poor_reads_${i}.csv

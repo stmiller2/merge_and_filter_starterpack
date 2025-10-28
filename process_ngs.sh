@@ -58,6 +58,8 @@ error = condor.err
 executable = merge_reads.sh
 arguments = $params_file
 
+transfer_input_files = ${data_filepath}/${params_file}
+
 initialdir = ${data_filepath}/pipeline
 
 request_cpus = ${cpus}
