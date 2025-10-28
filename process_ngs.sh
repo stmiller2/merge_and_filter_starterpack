@@ -26,7 +26,6 @@ compiler=$(awk -F, '/^compiler_filepath/ {print $2}' "$params_file" | tr -d '\r'
 cpus=$(awk -F, '/^cpus/ {print $2}' "$params_file" | tr -d '\r')
 memory=$(awk -F, '/^memory/ {print $2}' "$params_file" | tr -d '\r')
 disk=$(awk -F, '/^disk/ {print $2}' "$params_file" | tr -d '\r')
-instrument=$(awk -F, '/^instrument/ {print $2}' "$params_file" | tr -d '\r')
 q_floor=$(awk -F, '/^q_floor/ {print $2}' "$params_file" | tr -d '\r')
 q_cutoff=$(awk -F, '/^q_cutoff/ {print $2}' "$params_file" | tr -d '\r')
 cutoff_pct=$(awk -F, '/^cutoff_pct/ {print $2}' "$params_file" | tr -d '\r')
@@ -46,7 +45,6 @@ echo "Compiler Filepath   : $compiler"
 echo "CPUs                : $cpus"
 echo "Memory              : $memory"
 echo "Disk                : $disk"
-echo "Instrument          : $instrument"
 echo "Q Floor             : $q_floor"
 echo "Q Cutoff            : $q_cutoff"
 echo "Cutoff Percent      : $cutoff_pct"
@@ -74,7 +72,7 @@ log = condor.log
 error = condor.err
 
 executable = merge_reads.sh
-arguments = ${path} ${pear} ${pear_overlap} ${pear_stattest} ${pear_pvalue} ${merge} ${singleend} ${cpus} ${memory} ${instrument} ${q_floor} ${q_cutoff} ${cutoff_pct} ${sample_names_line} ${reorg}
+arguments = ${path} ${pear} ${pear_overlap} ${pear_stattest} ${pear_pvalue} ${merge} ${singleend} ${cpus} ${memory} ${q_floor} ${q_cutoff} ${cutoff_pct} ${sample_names_line} ${reorg}
 
 initialdir = ${path}/pipeline
 
