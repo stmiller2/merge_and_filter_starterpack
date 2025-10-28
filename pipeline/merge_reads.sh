@@ -54,25 +54,18 @@ for i in "${sample_names[@]}"; do
 	
 	if [ "$merge" == "TRUE" ]; then
 		echo -e "\n$(date '+%I:%M%p') -- MERGING PAIRED-END READS"
-		${pear} -f *_R1_001.fastq.gz -r *_R2_001.fastq.gz -o combined -y ${memory} -j ${cpus} -v ${pear_overlap} -g ${pear_stattest} -p ${pear_pvalue} | grep -E -m 3 "Assembled reads|Discarded reads|Not assembled reads" | awk 'NF' | sed 's/^/           /'
+		${pear} -f *_R1_001.fastq.gz -r *_R2_001.fastq.gz -o combined -y ${memory} -j ${cpus} -v ${pear_overlap} -g ${pear_stattest} -p ${pear_pvalue} \
+		| grep -E -m 3 "Assembled reads|Discarded reads|Not assembled reads" | awk 'NF' | sed 's/^/           /'
+	
 		echo -e "$(date '+%I:%M%p') -- READS MERGED"
 		echo -e "\n$(date '+%I:%M%p') -- FORMATTING MERGED READS"
-		if [ "$instrument" == "miseq" ]; then
-			sed '/@M07074/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		elif [ "$instrument" == "nextseq" ]; then
-			sed '/@VL00209/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		elif [ "$instrument" == "nextseq_fox" ]; then
-			sed '/@VL00232/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		elif [ "$instrument" == "novaseq" ]; then
-			sed '/@LH00283/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
-			echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
-		else
-			echo -e "$(date '+%I:%M%p') -- INVALID INSTRUMENT ID. OUTPUT FILE COULD NOT BE FORMATTED."
-		fi
+	
+		# Detect and strip headers starting with @ followed by any non-space characters
+		sed -E '/^@[A-Z0-9-]+/d' combined.assembled.fastq | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
+	
+		echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
 	fi
+
 	
 	if [[ "$merge" == "FALSE" && "$singleend" == "FALSE" ]]; then
 		echo -e "\n$(date '+%I:%M%p') -- CONCATENATING PAIRED-END READS"
