@@ -19,7 +19,7 @@ exec &> run_progress.log
 mkdir ${data_filepath}/csvs/
 rm ${data_filepath}/Fastq/paste_fastq_files_here
 
-if [ "$reorg" == "TRUE" ]; then
+if [ "$reorganize" == "TRUE" ]; then
     mkdir ${data_filepath}/csvs/raw/
     mkdir ${data_filepath}/csvs/raw/good_reads/
     mkdir ${data_filepath}/csvs/raw/poor_reads/
