@@ -1,4 +1,4 @@
-data_filepath,/scratch/stmiller2/merge_and_filter_starterpack_v8,
+data_filepath,/scratch/stmiller2/merge_and_filter_starterpack,
 pear_filepath,/scratch/stmiller2/software/pear-0.9.11-linux-x86_64/bin/pear,
 pear_overlap,10,
 pear_stattest,1,
@@ -13,5 +13,6 @@ instrument,nextseq,
 q_floor,20,
 q_cutoff,30,
 cutoff_pct,0.95,
-sample_names,AM1,AM2
+sample_names,test,
+
 reorganize,TRUE,
