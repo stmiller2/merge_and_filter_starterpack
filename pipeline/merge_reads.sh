@@ -1,38 +1,24 @@
 #!/bin/bash
 
 # Check if the correct number of arguments is provided
-if [ "$#" -ne 14 ]; then
-  echo "Did not recieve expected number of arguments. Check process_ngs.sh, which creates the submit file."
+if [ "$#" -ne 1 ]; then
+  echo "Usage: merge_reads.sh <params_file>"
   exit 1
 fi
 
+#Get params
+params_file="$1"
+source "$params_file"
+
 # Start clock
 start_time=$(date --utc +%s)
-
-# Get params from submit file arguments
-path=${1}
-pear=${2}
-pear_overlap=${3}
-pear_stattest=${4}
-pear_pvalue=${5}
-merge=${6}
-singleend=${7}
-cpus=${8}
-memory=${9}
-q_floor=${10}
-q_cutoff=${11}
-cutoff_pct=${12}
-sample_names_line=${13}
-reorg=${14}
-
-# Split sample_names_line into iterable
-IFS=',' read -r -a sample_names <<< "$(echo "$sample_names_line" | cut -d ',' -f 2-)"
 
 # Set up file structure
 cd ${path}
 exec &> run_progress.log
 mkdir ${path}/csvs/
 rm ${path}/Fastq/paste_fastq_files_here
+
 if [ "$reorg" == "TRUE" ]; then
     mkdir ${path}/csvs/raw/
     mkdir ${path}/csvs/raw/good_reads/
