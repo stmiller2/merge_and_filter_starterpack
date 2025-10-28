@@ -15,41 +15,26 @@ if [ ! -f "$params_file" ]; then
 fi
 
 # Get parameters from params file
-path=$(awk -F, '/^data_filepath/ {print $2}' "$params_file" | tr -d '\r')
-pear=$(awk -F, '/^pear_filepath/ {print $2}' "$params_file" | tr -d '\r')
-pear_overlap=$(awk -F, '/^pear_overlap/ {print $2}' "$params_file" | tr -d '\r')
-pear_stattest=$(awk -F, '/^pear_stattest/ {print $2}' "$params_file" | tr -d '\r')
-pear_pvalue=$(awk -F, '/^pear_pvalue/ {print $2}' "$params_file" | tr -d '\r')
-merge=$(awk -F, '/^merge/ {print $2}' "$params_file" | tr -d '\r')
-singleend=$(awk -F, '/^singleend/ {print $2}' "$params_file" | tr -d '\r')
-compiler=$(awk -F, '/^compiler_filepath/ {print $2}' "$params_file" | tr -d '\r')
-cpus=$(awk -F, '/^cpus/ {print $2}' "$params_file" | tr -d '\r')
-memory=$(awk -F, '/^memory/ {print $2}' "$params_file" | tr -d '\r')
-disk=$(awk -F, '/^disk/ {print $2}' "$params_file" | tr -d '\r')
-q_floor=$(awk -F, '/^q_floor/ {print $2}' "$params_file" | tr -d '\r')
-q_cutoff=$(awk -F, '/^q_cutoff/ {print $2}' "$params_file" | tr -d '\r')
-cutoff_pct=$(awk -F, '/^cutoff_pct/ {print $2}' "$params_file" | tr -d '\r')
-sample_names_line=$(grep "sample_names" "$params_file" | tr -d '[:space:]')
-reorg=$(awk -F, '/^reorganize/ {print $2}' "$params_file" | tr -d '\r')
+source "$params_file"
 
 # Print parameters to the terminal
 echo "================ Parameter Settings ================"
-echo "Data Filepath       : $path"
-echo "Pear Filepath       : $pear"
+echo "Data Filepath       : $data_filepath"
+echo "Pear Filepath       : $pear_filepath"
 echo "Pear Overlap        : $pear_overlap"
 echo "Pear Stat Test      : $pear_stattest"
 echo "Pear P-value        : $pear_pvalue"
 echo "Merge               : $merge"
 echo "Single-end          : $singleend"
-echo "Compiler Filepath   : $compiler"
+echo "Compiler Filepath   : $compiler_filepath"
 echo "CPUs                : $cpus"
 echo "Memory              : $memory"
 echo "Disk                : $disk"
 echo "Q Floor             : $q_floor"
 echo "Q Cutoff            : $q_cutoff"
 echo "Cutoff Percent      : $cutoff_pct"
-echo "Sample Names        : ${sample_names_line:13}"
-echo "Reorganize          : $reorg"
+echo "Sample Names        : $sample_names"
+echo "Reorganize          : $reorganize"
 echo "===================================================="
 
 if [[ "$merge" == "TRUE" && "$singleend" == "TRUE" ]]; then
@@ -58,12 +43,11 @@ if [[ "$merge" == "TRUE" && "$singleend" == "TRUE" ]]; then
 fi
 
 if [[ "$merge" == "FALSE" || "$singleend" == "TRUE" ]]; then
-    cd ${path}/Fastq
+    cd ${data_filepath}/Fastq
     gunzip *.fastq.gz
 fi
 
-
-cd ${path}/pipeline
+cd ${data_filepath}/pipeline
 
 # Create condor submit file
 cat <<EOF > process_ngs.sub
@@ -72,9 +56,9 @@ log = condor.log
 error = condor.err
 
 executable = merge_reads.sh
-arguments = ${path} ${pear} ${pear_overlap} ${pear_stattest} ${pear_pvalue} ${merge} ${singleend} ${cpus} ${memory} ${q_floor} ${q_cutoff} ${cutoff_pct} ${sample_names_line} ${reorg}
+arguments = $params_file
 
-initialdir = ${path}/pipeline
+initialdir = ${data_filepath}/pipeline
 
 request_cpus = ${cpus}
 request_memory = ${memory}
@@ -170,4 +154,4 @@ int main()
 EOF
 
 # Compile the quality filtering script (static compiling allows this to run through a cluster job)
-${compiler} -static-libstdc++ -o QF3.out QF3.cpp
+${compiler_filepath} -static-libstdc++ -o QF3.out QF3.cpp
