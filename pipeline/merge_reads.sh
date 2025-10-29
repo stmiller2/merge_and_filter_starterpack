@@ -38,7 +38,7 @@ log() {
 format_reads() {
     local target_file="$1"
     echo -e "\n$(date '+%I:%M%p') -- FORMATTING READS"
-    paste - - - - < "$target_file" | awk '{print $2, $4}' > combined.fastq #Keep every second and fourth line, combined & separated by a space
+    paste -d '\t' - - - - < "$target_file" | awk -F '\t' '{print $2, $4}' > combined.fastq #Keep every second and fourth line, combined & separated by a space
     echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
 }
 
