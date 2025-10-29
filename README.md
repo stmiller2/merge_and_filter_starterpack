@@ -56,6 +56,7 @@ cp -r {directory name} /scratch/{wiscID}
 ```
 
 ### STEP 5: Start the processing run
+If you cloned the GitHub repository, you will first need to make process_ngs.sh executable with `chmod +x`.
 ```
 chmod +x process_ngs.sh
 ./process_ngs.sh params.csv
