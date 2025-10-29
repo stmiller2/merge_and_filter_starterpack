@@ -38,9 +38,10 @@ log() {
 format_reads() {
     local target_file="$1"
     echo -e "\n$(date '+%I:%M%p') -- FORMATTING READS"
-    awk 'NR % 4 == 2' "$target_file" > combined.fastq #Keep every other line starting with line 2
+    paste - - - - < "$target_file" | awk '{print $2, $4}' > combined.fastq #Keep every second and fourth line, combined & separated by a space
     echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
 }
+
 
 # Iterate through samples
 IFS=',' read -r -a sample_names_array <<< "$sample_names"
