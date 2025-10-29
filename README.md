@@ -52,8 +52,7 @@ Move the entire directory to your scratch folder:
 cp -r {directory name} /scratch/{wiscID}
 ```
 
-### STEP 5
-Start the processing run
+### STEP 5: Start the processing run
 ```
 chmod +x process_ngs.sh
 ./process_ngs.sh params.csv
@@ -61,15 +60,12 @@ chmod +x process_ngs.sh
 
 Params will print to the console -- double check everything is set correctly. 
 
-### STEP 6
-Monitor the run progress
+### STEP 6: Monitor the run progress
 ```
 tail -f -n 50 run_progress.log
 ```
 (exit using ctrl+C)
 
-### STEP 7
-When finished, move the entire directory back to the fileserver.
+### STEP 7: When finished, move the entire directory back to the fileserver.
 
-### STEP 8
-Publish CNS
+### STEP 8: Publish CNS

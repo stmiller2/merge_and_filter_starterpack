@@ -58,10 +58,8 @@ for i in "${sample_names_array[@]}"; do
     # Merge or concatenate reads
     if [ "$merge" == "TRUE" ]; then
         log start "MERGING PAIRED-END READS"
-        # Run PEAR with live progress capture
-        stdbuf -oL "${pear_filepath}" -f *_R1_001.fastq.gz -r *_R2_001.fastq.gz -o combined \
+        "${pear_filepath}" -f *_R1_001.fastq.gz -r *_R2_001.fastq.gz -o combined \
             -y "${memory}" -j "${cpus}" -v "${pear_overlap}" -g "${pear_stattest}" -p "${pear_pvalue}" \
-            | tee >(grep --line-buffered '^Assemblying reads:' >> run_progress.log) \
             | grep -E -m 3 "Assembled reads|Discarded reads|Not assembled reads" | awk 'NF' | sed 's/^/           /'
         log stop "READS MERGED"
         format_reads combined.assembled.fastq
