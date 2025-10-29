@@ -68,4 +68,4 @@ tail -f -n 50 run_progress.log
 
 ### STEP 7: When finished, move the entire directory back to the fileserver.
 
-### STEP 8: Profit???
+### STEP 8: Publish CNS
