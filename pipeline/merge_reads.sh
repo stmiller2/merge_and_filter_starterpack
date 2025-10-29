@@ -38,7 +38,7 @@ log() {
 format_reads() {
     local target_file="$1"
     echo -e "\n$(date '+%I:%M%p') -- FORMATTING READS"
-    sed -E '/^@[A-Z0-9-]+/d' $target_file | sed '2~3d' | sed 'N;s/\n/ /' > combined.fastq
+    awk 'NR % 4 == 2' "$target_file" > combined.fastq #Keep every other line starting with line 2
     echo -e "$(date '+%I:%M%p') -- READS FORMATTED"
 }
 

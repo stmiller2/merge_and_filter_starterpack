@@ -49,38 +49,25 @@ fi
 
 cd ${data_filepath}/pipeline
 
-# Create condor submit file
-cat <<EOF > process_ngs.sub
-universe = vanilla
-log = condor.log
-error = condor.err
-
-executable = merge_reads.sh
-arguments = $params_file
-
-transfer_input_files = ${data_filepath}/${params_file}
-
-initialdir = ${data_filepath}/pipeline
-
-request_cpus = ${cpus}
-request_memory = ${memory}
-request_disk = ${disk}
-
-queue 1
-EOF
-
-# Submit the job with condor_submit
-condor_submit process_ngs.sub
-
-# Prepare C++ source from template
-template_file="QF3_template.cpp"
-output_cpp="QF3.cpp"
-
-# Replace placeholders in template with actual parameter values
+# Prepare C++ filtering script from template
 sed -e "s/{{Q_FLOOR}}/$q_floor/" \
     -e "s/{{Q_CUTOFF}}/$q_cutoff/" \
     -e "s/{{CUTOFF_PCT}}/$cutoff_pct/" \
-    "$template_file" > "$output_cpp"
+    QF3_template.cpp > QF3.cpp
+rm QF3_template.cpp
 
 # Compile the quality filtering script (static compiling allows this to run through a cluster job)
 ${compiler_filepath} -static-libstdc++ -o QF3.out "$output_cpp"
+
+# Prepare condor submit file from template
+sed -e "s|{{ARGS}}|$params_file|g" \
+    -e "s|{{INPUT_FILES}}|${data_filepath}/${params_file}|g" \
+    -e "s|{{INITIALDIR}}|${data_filepath}/pipeline|g" \
+    -e "s|{{CPUS}}|${cpus}|g" \
+    -e "s|{{MEMORY}}|${memory}|g" \
+    -e "s|{{DISK}}|${disk}|g" \
+    sub_template.sub > process_ngs.sub
+rm sub_template.sub 
+
+# Submit the job with condor_submit
+condor_submit process_ngs.sub
