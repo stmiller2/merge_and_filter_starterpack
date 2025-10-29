@@ -66,8 +66,8 @@ sed -e "s|{{ARGS}}|$params_file|g" \
     -e "s|{{CPUS}}|${cpus}|g" \
     -e "s|{{MEMORY}}|${memory}|g" \
     -e "s|{{DISK}}|${disk}|g" \
-    sub_template.sub > process_ngs.sub
-rm sub_template.sub 
+    submit_template.sub > process_ngs.sub
+rm submit_template.sub 
 
 # Submit the job with condor_submit
 condor_submit process_ngs.sub
