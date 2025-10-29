@@ -25,7 +25,10 @@ Move all your fastq files from the sequencer to the `Fastq/` directory. Filename
 - `{samplename}_S{#}_L001_R2_001.fastq.gz` – Reverse read (paired-end only)
 
 ### STEP 3
-Set parameters in the `params.env` file:
+Set parameters in the `params.env` file with your preferred command line file editor:
+```
+vi params.env
+```
 
 | PARAMETER         | VALUE      | DESCRIPTION |
 |-------------------|------------|-------------|
