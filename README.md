@@ -28,13 +28,13 @@ Move all your fastq files from the sequencer to the `Fastq/` directory. Filename
 Set parameters in the `params.env` file:
 
 | PARAMETER         | VALUE      | DESCRIPTION |
-|------------------|------------|-------------|
+|-------------------|------------|-------------|
 | data_filepath     | filepath   | Path to the file you are running this pipeline in |
 | pear_filepath     | filepath   | Path to the PEAR executable |
 | pear_overlap      | int        | Minimum overlap for merging (see PEAR docs) – suggest 10 |
 | pear_stattest     | int        | PEAR merging statistical test (see PEAR docs) – suggest 1 |
 | pear_pvalue       | float      | P-value for PEAR statistical test. Set to 1.0 to disable the test |
-| merge             | TRUE/FALSE | Typically TRUE – merges reads with PEAR. If FALSE, all PEAR parameters are ignored and reads are concatenated (very slow) |
+| merge             | TRUE/FALSE | Typically TRUE – merges reads with PEAR. If FALSE, PEAR parameters are ignored and R1 is concatenated to the reverse complement of R2 |
 | singleend         | TRUE/FALSE | FALSE for merging paired-end reads; TRUE for formatting & filtering single-end reads |
 | compiler_filepath | filepath   | Path to g++ executable (C++ compiler) |
 | cpus              | int        | Number of cores requested – suggest 8 |
