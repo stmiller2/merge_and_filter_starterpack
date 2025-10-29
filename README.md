@@ -1,4 +1,4 @@
-# Silas' NGS Processing Pipeline - Version 9
+# NGS Processing Pipeline - Version 9
 **Updated:** 10/28/2025
 
 **Contact:** stmiller2@wisc.edu
