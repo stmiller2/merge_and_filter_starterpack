@@ -57,7 +57,7 @@ sed -e "s/{{Q_FLOOR}}/$q_floor/" \
 rm QF3_template.cpp
 
 # Compile the quality filtering script (static compiling allows this to run through a cluster job)
-${compiler_filepath} -static-libstdc++ -o QF3.out "$output_cpp"
+${compiler_filepath} -static-libstdc++ -o QF3.out QF3.cpp
 
 # Prepare condor submit file from template
 sed -e "s|{{ARGS}}|$params_file|g" \
